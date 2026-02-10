@@ -4,10 +4,12 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- main
+  - main
 
 pool:
-  vmImage: ubuntu-latest
+  # vmImage: ubuntu-latest
+  name: 'aws-oidc-pool'
+
   
 variables:
   AWS_ACCOUNT_ID: "085494094526"
@@ -17,8 +19,6 @@ variables:
   ENVIRONMENT: production
   ADO_ROLE_ARN: arn:aws:iam::085494094526:role/ADORole
 
-pool:
-  name: 'aws-oidc-pool'
 
 steps:
 - task: Maven@3
