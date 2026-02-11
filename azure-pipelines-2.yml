@@ -4,19 +4,41 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- main
+  - main
 
 pool:
-  vmImage: ubuntu-latest
+  # vmImage: ubuntu-latest
+  name: 'aws-oidc-pool'
 
-steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+  
+variables:
+  AWS_ACCOUNT_ID: "085494094526"
+  AWS_REGION: us-west-2
+  ECR_REPOSITORY: gh/repo
+  CFN_STACK_NAME: enhanced-calculator-ecr-infrastructure
+  ENVIRONMENT: production
+  ADO_ROLE_ARN: arn:aws:iam::085494094526:role/ADORole
+
+jobs:
+- deployment: deploy
+  environment: 
+      name: prod
+  
+  strategy:
+    # default deployment strategy, more coming...
+    runOnce:
+      deploy:
+        steps:
+          - checkout: self
+            displayName: 'Checkout code'
+
+  # - task: Maven@3
+  #   inputs:
+  #     mavenPomFile: 'pom.xml'
+  #     mavenOptions: '-Xmx3072m'
+  #     javaHomeOption: 'JDKVersion'
+  #     jdkVersionOption: '1.11'
+  #     jdkArchitectureOption: 'x64'
+  #     publishJUnitResults: true
+  #     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+  #     goals: 'package'
